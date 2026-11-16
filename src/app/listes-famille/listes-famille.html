@@ -1,0 +1,50 @@
+<div class="container">
+
+  <div class="col-sm-4 col-md-4 col-lg-4 mb-4">
+    <app-updatefamille
+      [famille]="updatedFamille"
+      [ajout]="ajout"
+      (familleUpdated)="familleUpdated($event)">
+    </app-updatefamille>
+  </div>
+
+  <br>
+
+  <div class="card shadow mb-4">
+    <div class="card-body">
+
+      <table class="table table-striped">
+
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Nom Famille</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        @for (f of familles; track f.idFam) {
+
+        <tbody>
+          <tr>
+            <td>{{f.idFam}}</td>
+            <td>{{f.nomFam}}</td>
+
+            <td>
+              <a
+                class="btn btn-success"
+                (click)="updateFamille(f)">
+                Editer
+              </a>
+            </td>
+          </tr>
+        </tbody>
+
+        }
+
+      </table>
+
+    </div>
+  </div>
+
+</div>

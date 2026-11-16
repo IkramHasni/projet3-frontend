@@ -65,4 +65,28 @@ export class FragranceService {
     return of(this.fragrances.filter(f =>
       f.nomFragrance!.toLowerCase().includes(nom.toLowerCase())));
   }
+  ajouterFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
+
+  if (!famille.idFam) {
+    famille.idFam =
+      Math.max(...this.familles.map(f => f.idFam), 0) + 1;
+  }
+
+  this.familles.push(famille);
+
+  return of(famille);
+}
+
+updateFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
+
+  const index =
+    this.familles.findIndex(f => f.idFam === famille.idFam);
+
+  if (index > -1) {
+    this.familles[index] = famille;
+  }
+
+  return of(famille);
+}
+
 }
