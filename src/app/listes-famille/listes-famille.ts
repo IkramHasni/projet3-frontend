@@ -4,6 +4,7 @@ import { FragranceService } from '../services/fragrance.service';
 import { FamilleOlfactive } from '../model/famille-olfactive.model';
 import { UpdateFamilleComponent } from '../update-famille/update-famille';
 
+
 @Component({
   selector: 'app-listes-famille',
   standalone: true,
@@ -27,18 +28,18 @@ export class ListesFamilleComponent implements OnInit {
     this.chargerFamilles();
   }
 
-  chargerFamilles(): void {
+chargerFamilles(): void {
 
-    this.fragranceService.listeFamilles().subscribe({
-      next: (familles) => {
-        this.familles = familles;
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+  this.fragranceService.listeFamilles().subscribe({
+    next: (familles) => {
+      this.familles = familles._embedded.familleOlfactives;
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
 
-  }
+}
 
   familleUpdated(famille: FamilleOlfactive) {
 

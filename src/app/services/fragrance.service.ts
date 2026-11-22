@@ -2,14 +2,25 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Fragrance } from '../model/fragrance.model';
 import { FamilleOlfactive } from '../model/famille-olfactive.model';
+import { FamilleOlfactiveWrapper } from '../model/famille-olfactive-wrapped';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class FragranceService {
+  apiURL: string = 'http://localhost:9090/fragrances/api';
+  apiURLFam: string = 'http://localhost:9090/fragrances/fam';
+  constructor(private http: HttpClient) { }
 
-  familles: FamilleOlfactive[] = [
+/*   familles: FamilleOlfactive[] = [
     { idFam: 1, nomFam: "Boisé" },
     { idFam: 2, nomFam: "Floral" },
     { idFam: 3, nomFam: "Oriental" },
@@ -23,9 +34,9 @@ export class FragranceService {
     { idFragrance: 4, nomFragrance: "Aventus", marque: "Creed", volumeMl: 100, prixFragrance: 1100, dateCreation: new Date("01/01/2010"), famille: this.familles[3] },
     { idFragrance: 5, nomFragrance: "Black Opium", marque: "Yves Saint Laurent", volumeMl: 90, prixFragrance: 340, dateCreation: new Date("09/01/2014"), famille: this.familles[2] },
     { idFragrance: 6, nomFragrance: "Acqua di Giò", marque: "Giorgio Armani", volumeMl: 100, prixFragrance: 290.750, dateCreation: new Date("01/01/1996"), famille: this.familles[3] }
-  ];
+  ]; */
 
-  listeFragrances(): Observable<Fragrance[]> {
+ /*  listeFragrances(): Observable<Fragrance[]> {
     return of([...this.fragrances]);
   }
 
@@ -35,58 +46,52 @@ export class FragranceService {
     }
     this.fragrances.push(f);
     return of(f);
+  } */
+ listeFragrances(): Observable<Fragrance[]> {
+    return this.http.get<Fragrance[]>(this.apiURL);
   }
 
-  supprimerFragrance(id: number): Observable<any> {
-    this.fragrances = this.fragrances.filter(f => f.idFragrance != id);
-    return of(null);
+ ajouterFragrance(f: Fragrance): Observable<Fragrance> {
+  return this.http.post<Fragrance>(this.apiURL,f,httpOptions);
+}
+
+  supprimerFragrance(id: number) {
+    const url = `${this.apiURL}/${id}`;
+    return this.http.delete(url, httpOptions);
   }
 
   consulterFragrance(id: number): Observable<Fragrance> {
-    const f = this.fragrances.find(x => x.idFragrance == id)!;
-    return of({ ...f });
+    const url = `${this.apiURL}/${id}`;
+    return this.http.get<Fragrance>(url);
   }
 
   updateFragrance(f: Fragrance): Observable<Fragrance> {
-    const index = this.fragrances.findIndex(x => x.idFragrance == f.idFragrance);
-    if (index > -1) this.fragrances[index] = f;
-    return of(f);
+    return this.http.put<Fragrance>(this.apiURL, f, httpOptions);
+  }
+  
+
+  listeFamilles(): Observable<FamilleOlfactiveWrapper> {
+    return this.http.get<FamilleOlfactiveWrapper>(this.apiURLFam);
   }
 
-  listeFamilles(): Observable<FamilleOlfactive[]> {
-    return of(this.familles);
-  }
 
-  rechercherParFamille(idFam: number): Observable<Fragrance[]> {
-    return of(this.fragrances.filter(f => f.famille?.idFam == idFam));
-  }
 
-  rechercherParNom(nom: string): Observable<Fragrance[]> {
-    return of(this.fragrances.filter(f =>
-      f.nomFragrance!.toLowerCase().includes(nom.toLowerCase())));
-  }
+
   ajouterFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
-
-  if (!famille.idFam) {
-    famille.idFam =
-      Math.max(...this.familles.map(f => f.idFam), 0) + 1;
-  }
-
-  this.familles.push(famille);
-
-  return of(famille);
+  return this.http.post<FamilleOlfactive>(
+    this.apiURLFam,
+    famille,
+    httpOptions
+  );
 }
 
 updateFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
-
-  const index =
-    this.familles.findIndex(f => f.idFam === famille.idFam);
-
-  if (index > -1) {
-    this.familles[index] = famille;
-  }
-
-  return of(famille);
+  const url = `${this.apiURLFam}/${famille.idFam}`;
+  return this.http.put<FamilleOlfactive>(url, famille, httpOptions);
+}
+rechercherParFamille(idFam: number): Observable<Fragrance[]> {
+  const url = `http://localhost:9090/fragrances/rest/search/findByFamilleIdFam?id=${idFam}`;
+  return this.http.get<Fragrance[]>(url);
+}
 }
 
-}

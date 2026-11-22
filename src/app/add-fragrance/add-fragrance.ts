@@ -1,36 +1,63 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Fragrance } from '../model/fragrance.model';
 import { FragranceService } from '../services/fragrance.service';
 import { FamilleOlfactive } from '../model/famille-olfactive.model';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-fragrance',
-  imports: [FormsModule],
-  templateUrl: './add-fragrance.html',
-  styleUrl: './add-fragrance.css'
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './add-fragrance.html'
 })
 export class AddFragrance implements OnInit {
 
   newFragrance = new Fragrance();
 
-  familles! : FamilleOlfactive[];
-  newIdFam! : number;
-  newFamille! : FamilleOlfactive;
+  familles!: FamilleOlfactive[];
 
-  constructor(private fragranceService: FragranceService,
-              private router: Router) {}
+  newIdFam!: number;
 
-  ngOnInit() {
-    this.familles = this.fragranceService.familles;
-    this.newIdFam = this.familles[0].idFam;
+  newFamille!: FamilleOlfactive;
+
+  constructor(
+    private fragranceService: FragranceService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+
+    this.fragranceService.listeFamilles()
+      .subscribe(fams => {
+
+        console.log(fams);
+
+        this.familles =
+        fams._embedded.familleOlfactives;
+
+      });
+
   }
 
-  addFragrance(){
-   this.newFamille = this.familles.find(f => f.idFam == this.newIdFam)!;
-   this.newFragrance.famille = this.newFamille;
-   this.fragranceService.ajouterFragrance(this.newFragrance)
-     .subscribe(() => this.router.navigate(['fragrances']));
+  addFragrance() {
+
+    this.newFragrance.famille =
+      this.familles.find(
+        fam => fam.idFam == this.newIdFam
+      )!;
+
+    this.fragranceService
+      .ajouterFragrance(this.newFragrance)
+      .subscribe(fr => {
+
+        console.log(fr);
+
+        this.router.navigate(['fragrances']);
+
+      });
+
   }
+
 }
