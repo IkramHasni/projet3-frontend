@@ -17,10 +17,17 @@ export class RechercheParFamille implements OnInit {
   idFam: number | null = null;
   familles: FamilleOlfactive[] = [];
 
-  constructor(private fragranceService: FragranceService) {}
+  constructor(private fragranceService: FragranceService) { }
 
   ngOnInit(): void {
-    this.familles = this.fragranceService.familles;
+    this.fragranceService.listeFamilles().subscribe({
+      next: (fams) => {
+        this.familles = fams._embedded.familleOlfactives;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des familles", err);
+      }
+    });
     this.fragranceService.listeFragrances().subscribe(frags => this.fragrances = frags);
   }
 
