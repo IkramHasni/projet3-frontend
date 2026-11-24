@@ -19,7 +19,11 @@ export class UpdateFamilleComponent {
   @Output()
   familleUpdated = new EventEmitter<FamilleOlfactive>();
 
+ 
   saveFamille() {
-    this.familleUpdated.emit(this.famille);
-  }
+  
+  console.log(this.famille);
+
+  this.familleUpdated.emit(this.famille);
+}
 }

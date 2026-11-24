@@ -76,20 +76,28 @@ export class FragranceService {
 
 
 
+ajouterFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
 
-  ajouterFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
+  const nouvelleFamille = {
+    nomFam: famille.nomFam,
+    descriptionFam: null
+  };
+
   return this.http.post<FamilleOlfactive>(
     this.apiURLFam,
-    famille,
+    nouvelleFamille,
     httpOptions
   );
 }
 
-updateFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
+  updateFamille(famille: FamilleOlfactive): Observable<FamilleOlfactive> {
   const url = `${this.apiURLFam}/${famille.idFam}`;
   return this.http.put<FamilleOlfactive>(url, famille, httpOptions);
 }
-rechercherParFamille(idFam: number): Observable<Fragrance[]> {
+
+
+
+ rechercherParFamille(idFam: number): Observable<Fragrance[]> {
   const url = `http://localhost:9090/fragrances/rest/search/findByFamilleIdFam?id=${idFam}`;
   return this.http.get<Fragrance[]>(url);
 }
